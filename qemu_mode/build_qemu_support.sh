@@ -125,6 +125,19 @@ cd qemu-$VERSION || exit 1
 
 echo "[*] Applying patches..."
 
+# fixes glibc>=2.27 bug with memfd
+test "$GLIBC_VERSION" = "" && GLIBC_VERSION="`ldd --version | head -n 1 | grep -oE '[^ ]+$'`"
+
+
+if [ ""$GLIBC_VERSION>2.26" | bc" ]; then
+
+
+  patch -p1 <../patches/glibc_memfd.diff || exit 1
+  patch -p1 <../patches/glibc_configure.diff || exit 1
+
+
+fi
+
 patch -p1 <../patches/elfload.diff || exit 1
 patch -p1 <../patches/cpu-exec.diff || exit 1
 patch -p1 <../patches/syscall.diff || exit 1
